@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:focus_app/model/focus_activity.dart';
+import 'package:focus_app/custom_widgets/custom_field.dart';
+import 'package:focus_app/model/focus.dart';
 
 class AddAct extends StatefulWidget {
   const AddAct({super.key});
@@ -11,15 +14,47 @@ class AddAct extends StatefulWidget {
 class _AddActState extends State<AddAct> {
   final _formKey = GlobalKey<FormState>();
 
-  var _enteredTitle = '';
+  String _enteredTitle = '';
+  String _enteredDescription = '';
 
-  var _enteredDescription = '';
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tambah Aktifitas'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                CustomFormField.getCommonFormField((newValue) {
+                  setState(() {
+                    _enteredTitle = newValue!;
+                  });
+                }, _enteredTitle, "Judul"),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomFormField.getCommonFormField((newValue) {
+                  _enteredDescription = newValue!;
+                }, _enteredDescription, "Deskripsi"),
+                const SizedBox(
+                  height: 30,
+                ),
+                buttonsRow(context)
+              ],
+            )),
+      ),
+    );
+  }
 
   void _saveActivity(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(FocusActivity(
-          title: _enteredTitle, description: _enteredDescription));
+      Navigator.of(context).pop(
+          FocusAct(title: _enteredTitle, description: _enteredDescription));
     }
   }
 
@@ -27,64 +62,20 @@ class _AddActState extends State<AddAct> {
     _formKey.currentState!.reset();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  onSaved: (newValue) {
-                    _enteredTitle = newValue!;
-                  },
-                  validator: (value) {
-                    if (value == null ||
-                        value.isEmpty ||
-                        value.trim().length <= 1 ||
-                        value.trim().length > 20) {
-                      return 'Diisi yaa';
-                    }
-                    return null;
-                  },
-                  maxLength: 20,
-                  decoration: const InputDecoration(label: Text('Title')),
-                ),
-                TextFormField(
-                  onSaved: (newValue) {
-                    _enteredDescription = newValue!;
-                  },
-                  validator: (value) {
-                    if (value == null ||
-                        value.isEmpty ||
-                        value.trim().length <= 1 ||
-                        value.trim().length > 20) {
-                      return 'Diisi yaa';
-                    }
-                    return null;
-                  },
-                  maxLength: 40,
-                  decoration: const InputDecoration(label: Text('Description')),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(onPressed: _resetActivity, child: Text('Reset')),
-                    ElevatedButton(
-                        onPressed: () {
-                          _saveActivity(context);
-                        },
-                        child: const Text('Save'))
-                  ],
-                )
-              ],
-            )),
-      ),
-    );
-  }
+  Widget buttonsRow(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(onPressed: _resetActivity, child: const Text('Reset')),
+          const SizedBox(
+            width: 70,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                setState(() {});
+                _saveActivity(context);
+                print("$_enteredTitle - $_enteredDescription");
+              },
+              child: const Text('Simpan'))
+        ],
+      );
 }

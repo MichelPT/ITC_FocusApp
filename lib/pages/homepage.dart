@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:focus_app/model/focus_activity.dart';
+import 'package:focus_app/model/focus.dart';
 import 'package:focus_app/pages/add_activity.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,12 +10,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<FocusActivity> _focusList = [];
+  final List<FocusAct> _focusList = [];
 
   void _addActivity() async {
     final newActivity =
-        await Navigator.of(context).push<FocusActivity>(MaterialPageRoute(
-      builder: (context) => AddAct(),
+        await Navigator.of(context).push<FocusAct>(MaterialPageRoute(
+      builder: (context) => const AddAct(),
     ));
     if (newActivity == null) {
       return;
